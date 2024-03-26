@@ -1,4 +1,3 @@
-
 import mongoose from 'mongoose'
 
 const placeSchema = new mongoose.Schema({
@@ -33,10 +32,7 @@ const placeSchema = new mongoose.Schema({
         type: String,
         required: [true, 'Please add an image'],
     },
-    rating: {
-        type: Number,
-        required: [true, 'Please add a rating'],
-    },
+     
   
 }, {
     timestamps: true
