@@ -2,7 +2,7 @@ import mongoose from 'mongoose'
 
 const locationSchema = new mongoose.Schema({
  
-    latutude: {
+    latitude: {
         type: Number,
         required: [true, 'Please add a latitude'],
     },
@@ -10,16 +10,16 @@ const locationSchema = new mongoose.Schema({
         type: Number,
         required: [true, 'Please add a longitude'],
     },
-    // formattedAddress: String,
-    // street: String,
-    // city: String,
-    // state: String,
-    // zipcode: String,
-    // country: String,
-    createdAt: {
-        type: Date,
-        default: new Date(),
-    }
+    places: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Place'
+        }
+  ], 
+    
+}, {
+    timestamps: true
 })
 
-module.exports = mongoose.model('Location', locationSchema)
+const location = mongoose.model('Location', locationSchema);
+export default location 
