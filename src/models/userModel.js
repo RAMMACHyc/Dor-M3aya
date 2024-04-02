@@ -2,14 +2,7 @@ const mongoose = require('mongoose')
 
 const userSchema = mongoose.Schema(
   {
-    // firstName: {
-    //   type: String,
-    //   required: [true, 'Please add a firstName'],
-    // },
-    // lastName: {
-    //   type: String,
-    //   required: [true, 'Please add a lastName'],
-    // },
+    file: { type: String, required: [true, "please"] },
     tele: {
       type: String,
       required: [true, 'Please add a telephone number'],
@@ -27,6 +20,12 @@ const userSchema = mongoose.Schema(
       type: String,
       required: [true, 'Please add a password'],
     },
+    posts: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Post',
+      },
+    ],
   },
   {
     timestamps: true,
