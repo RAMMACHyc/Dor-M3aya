@@ -6,6 +6,7 @@ const postSchema = new mongoose.Schema({
         require: true,
         ref: 'User',
     },
+    
     title: { type: String, required: [true, "please"] },
     file: { type: String, required: [true, "please"] },
     likes: {
