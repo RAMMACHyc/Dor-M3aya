@@ -2,8 +2,7 @@ import "./config"
 import express from "express";
 import routerUser from "./routes/userRoutes";
 import routePlace from "./routes/placeRoutes"
-import routeCategory from "./routes/categoryRoutes"
-import routeRating from "./routes/ratingRoutes"
+import routecategory from "./routes/categoryRoutes"
 import routePost from "./routes/postRoutes"
 import { uploadHandler } from "./middleware/upload";
 import uploadMiddleware from "./util/upload";
@@ -20,9 +19,9 @@ app.use(cors());
 app.use(express.json())
 app.use("/user", routerUser)
 app.use("/place",routePlace)
-app.use("/category",routeCategory)
-app.use("/rating",routeRating)
+app.use("/category",routecategory)
 app.use("/posts",routePost)
+
 
 app.post('/upload',uploadMiddleware.single("image"), uploadHandler);
 
