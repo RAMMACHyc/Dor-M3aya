@@ -1,44 +1,44 @@
 
-const Category = require('../models/categoryModel');
+import Category from '../models/categoryModel.js';
 
 
+export const categoryController = {
 
-exports.createCategory = async (req, res) => {
-    const category = new Category({
-        name: req.body.name,
-        icon: req.body.icon
-    });
-
+createCategory :  async (req, res) => {
     try {
-        const newCategory = await category.save();
-        res.status(201).json(newCategory);
-    } catch (err) {
-        res.status(400).json({ message: err.message });
-    }
-}
+        const { name, IconName, color } = req.body;
+        console.log(req.body);
+        if(!(name && IconName && color)){
+            return res.status(400).json({message: 'All fields are required'})
+        }
+          const newCategory = new Category({
+            name,
+            IconName,
+            color,
+          });
+          const savedCategory = await newCategory.save();
+            res.status(201).json({
+                message: 'Category created successfully',
+                category: savedCategory,
+            });
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ error: 'Internal server error' });
+        }
+},
 
-exports.getCategories = async (req, res) => {
+getCategories : async (req, res) => {
     try {
         const categories = await Category.find();
         res.status(200).json(categories);
     } catch (err) {
         res.status(500).json({ message: err.message });
     }
-}
+},
 
-exports.getCategoryById = async (req, res) => {
-    try {
-        const category = await Category.findById(req.params.id);
-        if (!category) {
-            return res.status(404).json({ message: 'Category not found' });
-        }
-        res.status(200).json(category);
-    } catch (err) {
-        res.status(500).json({ message: err.message });
-    }
-}
 
-exports.updateCategory = async (req, res) => {
+
+updateCategory : async (req, res) => {
     try {
         const category = await Category.findById(req.params.id);
         if (!category) {
@@ -53,9 +53,9 @@ exports.updateCategory = async (req, res) => {
     } catch (err) {
         res.status(400).json({ message: err.message });
     }
-}
+},
 
-exports.deleteCategory = async (req, res) => {
+deleteCategory : async (req, res) => {
     try {
         const category = await Category.findById(req.params.id);
         if (!category) {
@@ -67,4 +67,5 @@ exports.deleteCategory = async (req, res) => {
     } catch (err) {
         res.status(500).json({ message: err.message });
     }
+}
 }
