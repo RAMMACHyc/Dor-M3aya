@@ -7,12 +7,13 @@ const User = require('../models/userModel');
 
 
 const registerUser = asyncHandler(async (req, res) => {
-  const { username, tele, email, password } = req.body;
-  if (!username ||  !email || !password) {
+  const {file, username, tele, email, password } = req.body;
+  console.log(req.body);
+  if (!username || !email || !password) {
     res.status(StatusCodes.BAD_REQUEST).json({ error: 'Please provide all fields' });
     return;
   }  
-
+ 
   const userExists = await User.findOne({ email: email.toLowerCase() });
 
   if (userExists) {
@@ -26,7 +27,8 @@ const registerUser = asyncHandler(async (req, res) => {
   const user = await User.create({
     tele,
     username,
-    email: email.toLowerCase(),
+    file,
+    email: email.toLowerCase(), 
     password: hashedPassword,
   });
   console.log(user);
@@ -43,7 +45,15 @@ const registerUser = asyncHandler(async (req, res) => {
   }
 });
 
-
+ const getUsersPosts = async (req, res) => {
+  try {
+      const usersWithPosts = await User.find().populate('posts');
+      res.status(200).json(usersWithPosts);
+  } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Internal server error' });
+  }
+}
 
 const loginUser = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
@@ -70,9 +80,11 @@ const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
     expiresIn: '30d',
   });
-};
+}; 
 
 module.exports = {
   registerUser,
   loginUser,
+  getUsersPosts
+  
 };
