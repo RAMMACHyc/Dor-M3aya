@@ -1,41 +1,29 @@
-import mongoose from 'mongoose'
+import mongoose from 'mongoose';
 
 const placeSchema = new mongoose.Schema({
-
-    title: {
-        type: String,
-        required: [true, 'Please add a title'],
-        unique: true,
-    },
-    description: {
-        type: String,
-        required: [true, 'Please add a description'],
-    },
-    location: {
-        type: {
-            type: String,
-            enum: ['Point'],
-            required: true
-        },
-        coordinates: {
-            type: [Number],
-            required: true
-        },
-        formattedAddress: String,
-        street: String,
-        city: String,
-        state: String,
-        zipcode: String,
-        country: String
-    },
-    image: {
-        type: String,
-        required: [true, 'Please add an image'],
-    },
-     
-  
+  city: {
+    type: String,
+    required: [true, 'Please add a city'],
+  },
+  placeName: {
+    type: String,
+    required: [true, 'Please add a place name'],
+  },
+  category: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Category',
+    required: [true, 'Please add a category'],
+  },
+  location: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Location',
+    required: [true, 'Please add a location'],
+  },
 }, {
-    timestamps: true
-})
+  timestamps: true,
+});
 
-module.exports = mongoose.model('Place', placeSchema)
+module.exports = mongoose.model('Place', placeSchema);
+
+const place = mongoose.model('Place', placeSchema);
+export default place 
