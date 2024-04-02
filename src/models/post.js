@@ -8,6 +8,7 @@ const postSchema = new mongoose.Schema({
     },
     
     title: { type: String, required: [true, "please"] },
+    city : { type: String, required: [true, "please"] },
     file: { type: String, required: [true, "please"] },
     likes: {
         type: Number,
