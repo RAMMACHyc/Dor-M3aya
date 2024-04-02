@@ -1,97 +1,44 @@
-const Place = require('../models/placeModel');
+import Place from '../models/placeModel';
+import Category from '../models/categoryModel';
+import Location from '../models/locationModel';
 
-
-// @desc    Get all places
-// @route   GET /api/places
-// @access  Public
-
-exports.getPlaces = async (req, res) => {
+export const placeController = {
+  createPlace: async (req, res) => {
     try {
-        const places = await Place.find();
-        res.status(200).json(places);
-    } catch (err) {
-        res.status(500).json({ message: err.message });
+      const { city, categoryId } = req.body;
+      console.log(req.body);
+      const { latitude, longitude } = req.body.location;
+      if (!city || !categoryId || !latitude || !longitude) {
+        return res.status(400).json({ error: 'Please provide all required fields' });
+      }
+      const location = await Location.create({ latitude, longitude });
+      const place = await Place.create({ city, category: categoryId, location: location._id });
+      await Category.findByIdAndUpdate(categoryId, { $push: { places: place._id } });
+      return res.status(201).json(place);
+    } catch (error) {
+      return res.status(400).json({ message: error.message }); 
     }
-};
+  },
 
-// @desc    Get a single place by ID
-// @route   GET /api/places/:id
-// @access  Public
 
-exports.getPlaceById = async (req, res) => {
+  getPlaces: async (req, res) => { 
     try {
-        const place = await Place.findById(req.params.id);
-        if (!place) {
-            return res.status(404).json({ message: 'Place not found' });
-        }
-        res.status(200).json(place);
-    } catch (err) {
-        res.status(500).json({ message: err.message });
+      const places = await Place.find().populate({
+        path: 'location',
+        select: 'latitude longitude'
+      });
+      const placesCoordinates = places.map(place => {
+        return {
+          city: place.city,
+          latitude: place.location ? place.location.latitude : null,
+          longitude: place.location ? place.location.longitude : null
+        };
+      });
+
+      return res.status(200).json(placesCoordinates);
+    } catch (error) {
+      return res.status(400).json({ message: error.message });
     }
-};
+  },
 
-// @desc    Create a new place
-// @route   POST /api/places
-// @access  Private (you may want to implement authentication)
-
-exports.createPlace = async (req, res) => {
-    const place = new Place({
-        title: req.body.title,
-        description: req.body.description,
-        location: req.body.location,
-        image: req.body.image,
-    });
-
-  
-
-    try {
-        const newPlace = await place.save();
-        res.status(201).json(newPlace);
-    } catch (err) {
-        res.status(400).json({ message: err.message });
-    }
-};
-
-// @desc    Update a place by ID
-// @route   PUT /api/places/:id
-// @access  Private (you may want to implement authentication)
-
-exports.updatePlace = async (req, res) => {
-    try {
-        const place = await Place.findById(req.params.id);
-
-        if (!place) {
-            return res.status(404).json({ message: 'Place not found' });
-        }
-
-        place.title = req.body.title || place.title;
-        place.description = req.body.description || place.description;
-        place.location = req.body.location || place.location;
-        place.image = req.body.image || place.image;
-        place.rating = req.body.rating || place.rating;
-        const updatedPlace = await place.save();
-        res.status(200).json(updatedPlace);
-        
-    } catch (err) {
-        res.status(400).json({ message: err.message });
-    }
-};
-
-// @desc    Delete a place by ID
-// @route   DELETE /api/places/:id
-// @access  Private (you may want to implement authentication)
-
-exports.deletePlace = async (req, res) => {
-    try {
-        const place = await Place.findById(req.params.id);
-
-        if (!place) {
-            return res.status(404).json({ message: 'Place not found' });
-        }
-
-        await place.remove();
-        res.status(200).json({ message: 'Place deleted' });
-    } catch (err) {
-        res.status(500).json({ message: err.message });
-    }
 };
